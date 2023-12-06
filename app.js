@@ -5,7 +5,9 @@ const sequelize = require('./utilities/database');
 const orderDB = require('./utilities/orderDatabase');
 
 const productRoutes = require('./routes/productRoutes');
+const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const orderProfileRoutes = require('./routes/orderProfileRoutes');
 const app = express();
 
 app.use(bodyParser.json());
@@ -15,7 +17,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use('/products', productRoutes);
+app.use('/auth', authRoutes);
 app.use('/orders', orderRoutes);
+app.use('/order-profiles', orderProfileRoutes);
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({

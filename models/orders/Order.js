@@ -7,6 +7,13 @@ const Order = orderDB.define('order', {
         autoIncrement: true,
         primaryKey: true
     },
+    userId: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: 'users',
+            key: 'id'
+        }
+    },
     customerName: {
         type: Sequelize.STRING,
         allowNull: false
@@ -57,5 +64,7 @@ const Order = orderDB.define('order', {
         allowNull: true // Может быть null, если заказ еще не отправлен
     }
 });
+
+
 
 module.exports = Order;

@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const ProductType = require('../models/ProductType');
+const meiliSearchClient = require('../utilities/meiliSearchClient');
 
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -27,7 +28,13 @@ const productController = {
                     await ProductType.create({...type, productId: product.id});
                 }));
             }
+            try {
+                await meiliSearchClient.index('products').addDocuments([product.toJSON()]);
+            } catch (meiliError) {
+                console.error('Ошибка индексации в MeiliSearch:', meiliError);
+            }
 
+            res.status(201).json(product);
             res.status(201).json(product);
         } catch (err) {
             res.status(400).json({error: err.message});
@@ -107,6 +114,12 @@ const productController = {
             }, {where: {id: req.params.id}});
             if (updated[0] > 0) {
                 const updatedProduct = await Product.findByPk(req.params.id);
+                // Обновление в MeiliSearch
+                try {
+                    await meiliSearchClient.index('products').updateDocuments([updatedProduct.toJSON()]);
+                } catch (meiliError) {
+                    console.error('Ошибка обновления индекса в MeiliSearch:', meiliError);
+                }
                 res.json(updatedProduct);
             } else {
                 res.status(404).json({error: 'Продукт не найден'});
@@ -121,6 +134,12 @@ const productController = {
         try {
             const deleted = await Product.destroy({where: {id: req.params.id}});
             if (deleted) {
+                // Удаление из MeiliSearch
+                try {
+                    await meiliSearchClient.index('products').deleteDocument(req.params.id);
+                } catch (meiliError) {
+                    console.error('Ошибка удаления из индекса MeiliSearch:', meiliError);
+                }
                 res.status(204).send();
             } else {
                 res.status(404).json({error: 'Продукт не найден'});
@@ -133,28 +152,38 @@ const productController = {
     // Поиск продуктов по названию
     searchProductsByName: async (req, res) => {
         try {
-            const {name} = req.params;
-            const products = await Product.findAll({
-                where: {name: {[Op.like]: `%${name}%`}}
+            const { name } = req.params;
+            const searchResults = await meiliSearchClient.index('products').search(name, {
+                attributesToRetrieve: ['name', 'description', 'id'],
+                limit: 20,
+                attributesToSearchOn: ['name'] // Ограничение поиска только по названию
             });
-            res.json(products);
+
+            res.json(searchResults.hits);
         } catch (err) {
-            res.status(500).json({error: err.message});
+            res.status(500).json({ error: 'Ошибка поиска: ' + err.message });
         }
     },
 
     // Поиск продуктов по болезни
     searchProductsByDisease: async (req, res) => {
         try {
-            const {disease} = req.params;
-            const products = await Product.findAll({
-                where: Sequelize.where(Sequelize.fn('JSON_CONTAINS', Sequelize.col('diseases'), Sequelize.literal(`'["${disease}"]'`)), true)
+            const { disease } = req.params; // Получение названия болезни из параметров запроса
+
+            // Выполнение поиска с помощью MeiliSearch
+            const searchResults = await meiliSearchClient.index('products').search(disease, {
+                attributesToRetrieve: ['name', 'description', 'diseases', 'id'],
+                limit: 20,
+                attributesToSearchOn: ['diseases'] // Ограничение поиска только по заболеваниям
             });
-            res.json(products);
+
+            // Отправка результатов поиска клиенту
+            res.json(searchResults.hits);
         } catch (err) {
-            res.status(500).json({error: err.message});
+            // Обработка возможных ошибок
+            res.status(500).json({ error: 'Ошибка поиска: ' + err.message });
         }
-    }
+    },
 };
 
 module.exports = productController;
