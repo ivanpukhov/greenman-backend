@@ -37,19 +37,19 @@
 Клонирование репозитория:
 
 ```bash
-git clone ссылкаНаРепозиторий
+git clone https://github.com/ivanpukhov/greenman-backend.git
 ```
 
 Переход в каталог проекта:
 
 ```bash
-cd папкаСПроектом
+cd greenman-server
 ```
 
 Установка необходимых пакетов и зависимостей:
 
 ```bash
-npm install
+yarn install
 ```
 
 Для настройки необходимых переменных среды переименуйте файл `.env.example` в `.env` и заполните его своими данными.
@@ -57,7 +57,7 @@ npm install
 Запуск приложения:
 
 ```bash
-npm start
+yarn start
 ```
 
 ## Примеры использования
@@ -69,7 +69,7 @@ npm start
 Описание того, как запустить тесты для проекта:
 
 ```bash
-npm test
+yarn test
 ```
 
 ## Как внести вклад
