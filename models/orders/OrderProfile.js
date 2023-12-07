@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const orderDB = require('../../utilities/orderDatabase'); // Путь к вашему файлу подключения
+const orderDB = require('../../utilities/orderDatabase');
 
 
 const OrderProfile = orderDB.define('orderProfile', {
@@ -35,7 +35,6 @@ const OrderProfile = orderDB.define('orderProfile', {
         type: Sequelize.STRING,
         allowNull: false
     }
-    // Дополнительные поля при необходимости
 });
 
 module.exports = OrderProfile;

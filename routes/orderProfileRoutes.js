@@ -1,5 +1,3 @@
-// orderProfileRoutes.js
-
 const express = require('express');
 const OrderProfileController = require('../controllers/orders/OrderProfileController');
 const authMiddleware = require('../middleware/authMiddleware');

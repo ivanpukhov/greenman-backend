@@ -1,6 +1,5 @@
 const express = require('express');
-const AuthController = require('../controllers/orders/AuthController'); // Убедитесь, что путь к AuthController указан верно
-
+const AuthController = require('../controllers/orders/AuthController');
 const router = express.Router();
 
 // Маршрут для регистрации пользователя

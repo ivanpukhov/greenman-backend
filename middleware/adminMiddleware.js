@@ -1,5 +1,3 @@
-// middleware/adminMiddleware.js
-
 function adminMiddleware(req, res, next) {
     if (req.user && req.user.role === 'admin') {
         next();

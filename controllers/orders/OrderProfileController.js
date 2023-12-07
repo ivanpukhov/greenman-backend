@@ -1,5 +1,5 @@
-const OrderProfile = require('../../models/orders/OrderProfile'); // Путь к модели OrderProfile
-const User = require('../../models/orders/User'); // Путь к модели User
+const OrderProfile = require('../../models/orders/OrderProfile');
+const User = require('../../models/orders/User');
 
 const OrderProfileController = {
     // Создание нового профиля заказа

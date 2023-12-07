@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 // Настройка подключения к базе данных
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './database/greenman.db' // Замените на путь к вашему файлу базы данных
+    storage: './database/greenman.db' 
 });
 
 // Проверка подключения

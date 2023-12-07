@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const User = require('../../models/orders/User'); // Используйте верный путь к вашей модели User
+const User = require('../../models/orders/User');
 const jwtUtility = require('../../utilities/jwtUtility');
 const sendNotification = require('../../utilities/notificationService');
 const Sequelize = require('sequelize');

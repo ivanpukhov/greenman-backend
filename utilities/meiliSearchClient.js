@@ -1,4 +1,3 @@
-// meiliSearchClient.js
 const { MeiliSearch } = require('meilisearch');
 
 const client = new MeiliSearch({

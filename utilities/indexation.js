@@ -1,11 +1,11 @@
-const meiliSearchClient = require('./meiliSearchClient'); // Путь к вашему MeiliSearch клиенту
-const Product = require('../models/Product'); // Путь к вашей модели продукта
+const meiliSearchClient = require('./meiliSearchClient');
+const Product = require('../models/Product');
 
 async function indexProducts() {
     try {
         // Получение всех продуктов из базы данных
         const products = await Product.findAll({
-            include: [{ all: true }] // Если у вас есть связанные модели, их тоже можно загрузить
+            include: [{ all: true }]
         });
 
         // Подготовка продуктов для индексации
