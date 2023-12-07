@@ -1,11 +1,14 @@
+// orderProfileRoutes.js
+
 const express = require('express');
-const OrderProfileController = require('../controllers/orders/OrderProfileController'); // Путь к OrderProfileController
+const OrderProfileController = require('../controllers/orders/OrderProfileController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/', OrderProfileController.createOrderProfile);
-router.get('/user/:userId', OrderProfileController.getOrderProfiles);
-router.put('/:profileId', OrderProfileController.updateOrderProfile);
-router.delete('/:profileId', OrderProfileController.deleteOrderProfile);
+router.post('/', OrderProfileController.createOrderProfile); // Не защищён
+router.get('/user/:userId', authMiddleware, OrderProfileController.getOrderProfiles);
+router.put('/:profileId', authMiddleware, OrderProfileController.updateOrderProfile);
+router.delete('/:profileId', authMiddleware, OrderProfileController.deleteOrderProfile);
 
 module.exports = router;

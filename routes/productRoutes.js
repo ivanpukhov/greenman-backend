@@ -1,6 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const productController = require('../controllers/productController');
+const authMiddleware = require('../middleware/authMiddleware');
+const adminMiddleware = require('../middleware/adminMiddleware');
 
 const router = express.Router();
 
@@ -29,11 +31,11 @@ const upload = multer({
 });
 
 // Маршруты для продуктов
-router.post('/add', upload.single('video'), productController.addProduct);
+router.post('/add', authMiddleware, adminMiddleware, upload.single('video'), productController.addProduct);
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
-router.put('/:id', upload.single('video'), productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.put('/:id', authMiddleware, adminMiddleware, upload.single('video'), productController.updateProduct);
+router.delete('/:id', authMiddleware, adminMiddleware, productController.deleteProduct);
 router.get('/search/name/:name', productController.searchProductsByName);
 router.get('/search/disease/:disease', productController.searchProductsByDisease);
 router.post('/getProductsByIdsAndTypes', productController.getProductsByIdsAndTypes);
