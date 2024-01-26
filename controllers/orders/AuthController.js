@@ -135,7 +135,7 @@ const AuthController = {
         }
         const saltRounds = 10;
 
-        user.password = await bcrypt.hash(newPassword, saltRounds);
+        user.password = newPassword;
         user.resetPasswordCode = null;
         user.resetPasswordExpires = null;
         await user.save();

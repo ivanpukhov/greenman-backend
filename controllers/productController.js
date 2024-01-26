@@ -1,16 +1,29 @@
 const Product = require('../models/Product');
 const ProductType = require('../models/ProductType');
 const meiliSearchClient = require('../utilities/meiliSearchClient');
+const axios = require('axios'); // Для выполнения HTTP-запросов
+const OpenAI = require('openai');
 
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+const assistantId = 'asst_NnLKRpB58h9Xuxiz5Ra1Qkha'; // ID вашего ассистента
+
+const openai = new OpenAI({apiKey: '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'})
 
 const productController = {
     // Добавление нового продукта
 
     addProduct: async (req, res) => {
         try {
-            const { name, description, applicationMethodChildren, applicationMethodAdults, diseases, contraindications, types } = req.body;
+            const {
+                name,
+                description,
+                applicationMethodChildren,
+                applicationMethodAdults,
+                diseases,
+                contraindications,
+                types
+            } = req.body;
             let videoUrl = req.file ? req.file.path : null;
 
             const product = await Product.create({
@@ -65,10 +78,9 @@ const productController = {
 
             res.json(productsInfo.filter(info => info !== null));
         } catch (err) {
-            res.status(500).json({ error: err.message });
+            res.status(500).json({error: err.message});
         }
     },
-
 
 
     getAllProducts: async (req, res) => {
@@ -152,7 +164,7 @@ const productController = {
     // Поиск продуктов по названию
     searchProductsByName: async (req, res) => {
         try {
-            const { name } = req.params;
+            const {name} = req.params;
             const searchResults = await meiliSearchClient.index('products').search(name, {
                 attributesToRetrieve: ['name', 'description', 'id'],
                 limit: 20,
@@ -161,29 +173,26 @@ const productController = {
 
             res.json(searchResults.hits);
         } catch (err) {
-            res.status(500).json({ error: 'Ошибка поиска: ' + err.message });
+            res.status(500).json({error: 'Ошибка поиска: ' + err.message});
         }
     },
 
-    // Поиск продуктов по болезни
+
     searchProductsByDisease: async (req, res) => {
         try {
-            const { disease } = req.params; // Получение названия болезни из параметров запроса
+            const {disease} = req.params;
 
-            // Выполнение поиска с помощью MeiliSearch
-            const searchResults = await meiliSearchClient.index('products').search(disease, {
-                attributesToRetrieve: ['name', 'description', 'diseases', 'id'],
-                limit: 20,
-                attributesToSearchOn: ['diseases'] // Ограничение поиска только по заболеваниям
-            });
+            if (!disease) {
+                return res.status(400).send('Не указана болезнь');
+            }
 
-            // Отправка результатов поиска клиенту
-            res.json(searchResults.hits);
-        } catch (err) {
-            // Обработка возможных ошибок
-            res.status(500).json({ error: 'Ошибка поиска: ' + err.message });
+
+        } catch (error) {
+            console.error('Ошибка при запросе к OpenAI GPT-4 Assistant:', error);
+            res.status(500).send('Ошибка при обработке запроса');
         }
-    },
+
+    }
 };
 
 module.exports = productController;

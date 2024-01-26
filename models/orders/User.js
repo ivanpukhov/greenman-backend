@@ -57,6 +57,7 @@ User.beforeUpdate(async (user, options) => {
     }
 });
 
+
 User.hasMany(Order, { foreignKey: 'userId' });
 User.hasMany(OrderProfile, { foreignKey: 'userId' });
 Order.belongsTo(User, { foreignKey: 'userId' });
